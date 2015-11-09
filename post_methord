@@ -1,0 +1,47 @@
+- (IBAction)btnSubmite:(id)sender
+{
+    //checking net connection is there or not
+    NSURL *scriptUrl = [NSURL URLWithString:@"http://arbsoft.com/dev/mqspectrum/customers/authenticate"];
+    NSData *data = [NSData dataWithContentsOfURL:scriptUrl];
+    if (data){
+        NSLog(@"Device is connected to the internet");
+        
+        // if is it from graft mode
+        if([[[NSUserDefaults standardUserDefaults]valueForKey:@"FormArray"] isEqualToString:@"YES"])
+        {
+            for (i=0; i<[arrImageCount count]; i++)
+            {
+                NSString *urlString1 = [NSString stringWithFormat:@"http://arbsoft.com/dev/mqspectrum/customers/authenticate"];
+                
+                NSMutableURLRequest *request1 = [[NSMutableURLRequest alloc] init] ;
+                [request1 setURL:[NSURL URLWithString:urlString1]];
+                [request1 setHTTPMethod:@"POST"];
+                
+                
+                NSString *boundary1 = @"---------------------------14737809831466499882746641449";
+                NSString *contentType1 = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",boundary1];
+                [request1 addValue:contentType1 forHTTPHeaderField: @"Content-Type"];
+                
+                NSMutableData *body1 = [NSMutableData data];
+                
+                [body1 appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary1] dataUsingEncoding:NSUTF8StringEncoding]];
+                [body1 appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"username\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+                [body1 appendData:[txtFldUserName.text dataUsingEncoding:NSUTF8StringEncoding]];
+                
+                
+                [body1 appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary1] dataUsingEncoding:NSUTF8StringEncoding]];
+                [body1 appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"password\"\r\n\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+                [body1 appendData:[txtFldPassrd.text dataUsingEncoding:NSUTF8StringEncoding]];
+                
+                [request1 setHTTPBody:body1];
+                // now lets make the connection to the web
+                NSData *returnData1 = [NSURLConnection sendSynchronousRequest:request1 returningResponse:nil error:nil];
+                NSLog( @">>>%@",returnData1);
+                
+                NSString *returnString = [[NSString alloc] initWithData:returnData1 encoding:NSUTF8StringEncoding];
+                NSLog( @">>>%@",returnString);
+                
+                
+                dic = [NSJSONSerialization JSONObjectWithData:returnData1 options:NSJSONReadingAllowFragments error:nil];
+                
+                NSString *str1=[dic valueForKey:@"status"];
