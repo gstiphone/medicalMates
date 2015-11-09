@@ -1,0 +1,72 @@
+-(IBAction)loginPress:(id)sender
+{
+  
+    [spinner startAnimating];
+    
+    
+    //    if ([self validateEmail:self.emailTextField.text]==YES)
+    //    {
+    
+    NSString *urlStr=[NSString stringWithFormat:@"http://csidiscoverthinking.com/csi/webservice/json.php?tag=login&username=%@&pass=%@",self.emailTextField.text,self.passwordTextField.text];
+    NSURL *url=[NSURL URLWithString:urlStr];
+    NSURLRequest *request=[NSURLRequest requestWithURL:url];
+    NSOperationQueue *que=[NSOperationQueue mainQueue];
+    [NSURLConnection sendAsynchronousRequest:request queue:que completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         if(data)
+         {
+             NSError* error=nil;
+             NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions
+                                                                    error:&error];
+             
+             NSLog(@"json %@",json);
+             NSMutableDictionary *jsonNew=[json valueForKey:@"LoginResponse"];
+             
+             NSString *loginResponse=[[NSString alloc]init];
+             
+             loginResponse = [jsonNew objectForKey:@"Message"];
+             NSLog(@"login %@",loginResponse);
+             if([loginResponse isEqualToString:@"Login successfully!"])
+             {
+                 
+                 [articleDetail setObject:[jsonNew objectForKey:@"UserId"] forKey:@"userID"];
+                 [articleDetail setBool:YES forKey:@"isLogin"];
+
+                 
+                 if(IS_IPHONE5)
+                 {
+                     HomeViewController *homeViewController=[[HomeViewController alloc]initWithNibName:@"HomeViewController_iPhone5" bundle:nil];
+                     [self.navigationController pushViewController:homeViewController animated:YES];
+                     
+                 }
+                 else if (IS_IPAD)
+                 {
+                     HomeViewController *homeViewController=[[HomeViewController alloc]initWithNibName:@"HomeViewController_iPad" bundle:nil];
+                     [self.navigationController pushViewController:homeViewController animated:YES];
+                     
+                     
+                 }
+                 else
+                 {
+                     
+                     HomeViewController *homeViewController=[[HomeViewController alloc]initWithNibName:@"HomeViewController" bundle:nil];
+                     [self.navigationController pushViewController:homeViewController animated:YES];
+                 }
+                 
+            }
+             else
+             {
+                 UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil message:@"Invalid Login Credential else Account not Verified" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                 [alert show];
+  
+             }
+             
+             [spinner stopAnimating];
+             [spinner removeFromSuperview];
+         }
+         
+         [spinner stopAnimating];
+         [spinner removeFromSuperview];
+     }];
+   
+}
