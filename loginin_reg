@@ -70,3 +70,18 @@
      }];
    
 }
+
+========================================
+ NSString *str = [NSString stringWithFormat:@"http://gstcloud.com/developer/aboriginal-australia/webservices/webservice.php?tag=getHeritageList&lmt=5"];
+    NSLog(@"%@",str);
+    
+    NSURL *url = [[NSURL alloc] initWithString:[str stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSLog(@"%@",url);
+    NSData *jdata = [NSData dataWithContentsOfURL:url];
+    NSError *error=nil;
+    
+    
+    
+    NSArray *arr = [NSJSONSerialization JSONObjectWithData:jdata options:NSJSONReadingAllowFragments error:&error];
+    NSLog(@"%@",arr);
+
