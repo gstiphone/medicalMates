@@ -71,7 +71,8 @@
    
 }
 
-========================================
+======================================== json with array object
+
  NSString *str = [NSString stringWithFormat:@"http://gstcloud.com/developer/aboriginal-australia/webservices/webservice.php?tag=getHeritageList&lmt=5"];
     NSLog(@"%@",str);
     
